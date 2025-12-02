@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Privacy Ledger",
+  "version": "1.0",
+  "description": "An app that utilizes a Tor proxy wrapper to anonymize traffic and display all active webpage trackers to the user.",
+  "permissions": [
+    "nativeMessaging",
+    "storage",
+    "proxy",
+    "webRequest",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions":[
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
