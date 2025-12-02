@@ -31,7 +31,7 @@ This project consists of two distinct components that communicate via Chrome's *
 Because this project involves a Native Host (executable), installation is a two-step process.
 
 ### Phase 1: Install the Privacy Ledger Extension
-1.  Download the TorVerifier folder from this Github repository, or clone the entire repository. If downloading just the TorVerifier folder, make sure it is unzipped and structured as '/TorVerifier/[various js, json, html files]', not /TorVerifier/TorVerifier/[various js, json, html files]'.
+1.  Download the TorVerifier folder from this Github repository, or clone the entire repository. If downloading just the TorVerifier folder, make sure it is unzipped and structured as `'/TorVerifier/[various js, json, html files]'`, not `'/TorVerifier/TorVerifier/[various js, json, html files]'`.
 2.  Open Google Chrome (or a Chromium browser like Brave/Edge).
 3.  Navigate to **`chrome://extensions/`**.
 4.  Toggle **Developer mode** to **ON** (top right corner).
