@@ -2,33 +2,97 @@
 <html>
 <head>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 50px; }
-    .step { margin: 20px auto; max-width: 600px; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
-    button { background: #007bff; color: white; padding: 15px 30px; border: none; font-size: 16px; cursor: pointer; border-radius: 5px;}
-    .success { color: green; display: none; }
+    body { font-family: sans-serif; text-align: center; padding: 40px; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .step { margin: 20px 0; padding: 25px; border: 1px solid #ddd; border-radius: 8px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    
+    button { 
+      background: #007bff; color: white; 
+      padding: 12px 24px; border: none; 
+      font-size: 16px; cursor: pointer; border-radius: 5px; 
+      transition: background 0.2s;
+    }
+    button:hover { background: #0056b3; }
+    
+    .success { color: #28a745; display: none; font-weight: bold; }
+    .error { color: #dc3545; font-weight: bold; display: none; }
+    
+    /* Troubleshooting & Info Styles */
+    details { margin-top: 15px; text-align: left; font-size: 14px; color: #666; border-top: 1px solid #eee; padding-top: 10px; }
+    summary { cursor: pointer; font-weight: bold; color: #007bff; outline: none; }
+    summary:hover { text-decoration: underline; }
+    
+    .code-block { 
+      background: #f4f4f4; padding: 10px; 
+      border-radius: 4px; font-family: monospace; 
+      color: #333; overflow-x: auto; margin: 10px 0; 
+    }
+    .note { font-size: 13px; color: #777; margin-top: 5px; }
+    .info-block { background-color: #eef6ff; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 13px; text-align: left; color: #444; }
   </style>
 </head>
 <body>
-  <h1>Almost Ready!</h1>
-  <p>To enable Tor privacy features, you need to install the helper app.</p>
+  <div class="container">
+    <h1>Almost Ready!</h1>
+    <p>To enable Tor privacy features, you need to install the helper app.</p>
 
-  <div class="step">
-    <h3>Step 1: Download the Helper</h3>
-    <a href="https://github.com/aa-phan/PrivacyLedgerHost/raw/main/dist/PrivacyLedgerHost.zip" target="_blank" rel="noopener noreferrer">
-      <button>Download Privacy Ledger Helper</button>
-    </a>
-  </div>
+    <div class="step">
+      <h3>Step 1: Download the Helper</h3>
+      <p>Download the setup package for your system.</p>
+      <a href="https://github.com/aa-phan/PrivacyLedgerHost/raw/main/dist/PrivacyLedgerHost.zip" target="_blank" rel="noopener noreferrer">
+        <button>Download Helper (ZIP)</button>
+      </a>
 
-  <div class="step">
-    <h3>Step 2: Run the File</h3>
-    <p>Double-click the downloaded file. It will set up the connection automatically.</p>
-  </div>
+      <details>
+        <summary>Is this file safe? What does it do?</summary>
+        <div class="info-block">
+          <p><strong>What is this file?</strong><br>
+          This is a simple "bridge" application. Browser extensions are blocked from launching external programs (like Tor) for security reasons. This helper app runs locally to start the Tor network on your behalf.</p>
+          <p><strong>Is it safe?</strong><br>
+          Yes. The code is open-source, runs entirely on your machine, and does not transmit your data to any third-party servers. It only listens for "Start" and "Stop" commands from this extension.</p>
+        </div>
+      </details>
+    </div>
 
-  <div class="step">
-    <h3>Status</h3>
-    <p id="status">Waiting for connection...</p>
-    <h2 id="successMsg" class="success">Connected! You can close this tab.</h2>
-    <button id="retryBtn">Check Connection Now</button>
+    <div class="step">
+      <h3>Step 2: Run the Installer</h3>
+      <p>1. Open the downloaded <b>ZIP</b> file.</p>
+      <p>2. Double-click <b>install.command</b> inside the folder.</p>
+      <p class="note">This script automatically sets permissions and launches the proxy.</p>
+
+      <details>
+        <summary>Help: "File could not be executed / Access Denied"</summary>
+        <p>If macOS says you don't have privileges, follow these steps:</p>
+        <ol>
+          <li>Open your <b>Terminal</b> app (Cmd+Space, type "Terminal").</li>
+          <li>Type this command (don't hit Enter yet):</li>
+          <div class="code-block">chmod +x </div>
+          <li><b>Drag and Drop</b> the <code>install.command</code> file from your Finder window into the Terminal window.</li>
+          <li>Hit <b>Enter</b>.</li>
+          <li>Now <b>Double-Click</b> the file again. It should work!</li>
+        </ol>
+      </details>
+
+      <details>
+        <summary>Help: "Unidentified Developer" or "Blocked"</summary>
+        <p>If macOS blocks the app because it's from an unidentified developer:</p>
+        <ol>
+          <li>Click <b>OK</b> on the error popup.</li>
+          <li>Open <b>System Settings</b> and go to <b>Privacy & Security</b>.</li>
+          <li>Scroll down to the <b>Security</b> section.</li>
+          <li>You will see a message about "PrivacyLedgerHost" being blocked.</li>
+          <li>Click the <b>Open Anyway</b> button.</li>
+          <li>Enter your password if prompted, then click <b>Open</b>.</li>
+        </ol>
+      </details>
+    </div>
+
+    <div class="step">
+      <h3>Status</h3>
+      <p id="status">Waiting for connection...</p>
+      <h2 id="successMsg" class="success">Connected! You can close this tab.</h2>
+      <button id="retryBtn">Check Connection Now</button>
+    </div>
   </div>
 
   <script src="welcome.js"></script>

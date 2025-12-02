@@ -8,16 +8,26 @@
     "storage",
     "proxy",
     "webRequest",
-    "scripting",
     "tabs"
   ],
   "host_permissions":[
     "<all_urls>"
   ],
+  "icons": {
+    "16": "icons/onion.png",
+    "48": "icons/onion.png",
+    "128": "icons/onion.png"
+  },
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/onion.png",
+      "32": "icons/onion.png",
+      "48": "icons/onion.png",
+      "128": "icons/onion.png"
+    }
   }
 }

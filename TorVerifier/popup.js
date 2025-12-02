@@ -28,13 +28,13 @@ function updateUI(status) {
 // LISTENERS
 document.getElementById('startBtn').addEventListener('click', () => {
   document.getElementById('startBtn').disabled = true;
-  document.getElementById('status').textContent = "⏳ Sending start command...";
+  document.getElementById('status').textContent = "Sending start command...";
   chrome.runtime.sendMessage({ action: "USER_START" });
 });
 
 document.getElementById('stopBtn').addEventListener('click', () => {
   document.getElementById('stopBtn').disabled = true;
-  document.getElementById('status').textContent = "⏳ Sending stop command...";
+  document.getElementById('status').textContent = "Sending stop command...";
   chrome.runtime.sendMessage({ action: "USER_STOP" });
 });
 
