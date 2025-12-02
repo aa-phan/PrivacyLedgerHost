@@ -1,20 +1,24 @@
-// config
+// background.js
+
+// --- 1. CONFIGURATION ---
 const HOST_NAME = "com.privacyscanner.torproxy";
 const BLOCKLIST_URL = "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
 
 // Fallback list
 const DEFAULT_TRACKERS = [
-  "google-analytics.com", "doubleclick.net", "facebook.com/tr", "hotjar.com",
-  "criteo.com", "outbrain.com", "taboola.com", "adservice.google.com", 
-  "google.com", "amazon.com", "reddit.com", "bing.com"
+  ///"google-analytics.com", "doubleclick.net", "facebook.com/tr", "hotjar.com",
+  ///"criteo.com", "outbrain.com", "taboola.com", "adservice.google.com", 
+  ///"google.com", "amazon.com", "reddit.com", "bing.com"
 ];
 
+// --- 2. STATE ---
 let trackerSet = new Set(DEFAULT_TRACKERS);
 let ledgerData = {};
 let nativePort = null;
 
+// --- 3. BLOCKLIST ENGINE ---
 async function updateBlocklist() {
-  console.log("Downloading Full Blocklist...");
+  console.log("⏳ Downloading Full Blocklist...");
   try {
     const response = await fetch(BLOCKLIST_URL);
     const text = await response.text();
@@ -26,16 +30,20 @@ async function updateBlocklist() {
       const parts = line.split(/\s+/);
       if (parts.length >= 2) newSet.add(parts[1]);
     }
+    
+    // Merge defaults back in so you can test with google/reddit
+    DEFAULT_TRACKERS.forEach(domain => newSet.add(domain));
 
     trackerSet = newSet;
     const arrayToSave = Array.from(newSet).slice(0, 150000);
     await chrome.storage.local.set({ cachedBlocklist: arrayToSave, lastUpdate: Date.now() });
-    console.log(`Blocklist Updated! Loaded ${newSet.size} rules.`);
+    
+    console.log(`✅ Blocklist Updated! Loaded ${newSet.size} rules.`);
     chrome.action.setBadgeText({ text: "UP" });
     setTimeout(() => chrome.action.setBadgeText({ text: "" }), 2000);
 
   } catch (err) {
-    console.error("Failed to update blocklist:", err);
+    console.error("❌ Failed to update blocklist:", err);
   }
 }
 
@@ -43,12 +51,13 @@ async function loadBlocklist() {
   const data = await chrome.storage.local.get(['cachedBlocklist']);
   if (data.cachedBlocklist && data.cachedBlocklist.length > 0) {
     trackerSet = new Set(data.cachedBlocklist);
-    console.log(`Loaded ${trackerSet.size} rules from cache.`);
+    console.log(`📂 Loaded ${trackerSet.size} rules from cache.`);
   } else {
     updateBlocklist();
   }
 }
 
+// --- 4. INITIALIZATION ---
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === 'install' || details.reason === 'update') {
     chrome.tabs.create({ url: 'welcome.html' });
@@ -58,6 +67,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 
 loadBlocklist();
 
+// --- 5. DETECTION LOGIC ---
 function isTrackerDomain(domain) {
   if (trackerSet.has(domain)) return true;
   const parts = domain.split('.');
@@ -68,6 +78,7 @@ function isTrackerDomain(domain) {
   return false;
 }
 
+// --- 6. PROXY & HOST LOGIC ---
 const PROXY_CONFIG = {
   mode: "fixed_servers",
   rules: {
@@ -77,27 +88,44 @@ const PROXY_CONFIG = {
 };
 
 function enableProxy() {
-  chrome.proxy.settings.set({ value: PROXY_CONFIG, scope: 'regular' });
+  console.log("enabling proxy settings...");
+  chrome.proxy.settings.set({ value: PROXY_CONFIG, scope: 'regular' }, () => {
+    console.log("✅ Proxy Enabled (Fixed Servers).");
+  });
 }
 
 function disableProxy() {
-  chrome.proxy.settings.clear({ scope: 'regular' });
+  console.log("disabling proxy settings...");
+  // FIX: Force 'system' mode to guarantee the proxy is cleared
+  const config = { mode: "system"};
+  chrome.proxy.settings.set({ value: config, scope: 'regular' }, () => {
+    console.log("⏹️ Proxy Explicitly Reset to System.");
+  });
 }
 
 function connectToHost() {
   if (nativePort) return;
+  
   console.log("Connecting to Native Host wrapper...");
   nativePort = chrome.runtime.connectNative(HOST_NAME);
 
   nativePort.onMessage.addListener((msg) => {
+    console.log("Received from Host:", msg);
+
     if (msg.data && msg.data.status) {
       const status = msg.data.status;
       chrome.storage.local.set({ torStatus: status });
       
       if (status === "Starting" || status === "Running") {
         enableProxy();
-        if (status === "Starting") setTimeout(() => nativePort.postMessage({ command: "GET_STATUS" }), 2000);
-      } else if (status === "Stopped") {
+        if (status === "Starting") {
+            setTimeout(() => {
+                nativePort.postMessage({ command: "GET_STATUS" });
+            }, 2000);
+        }
+      } 
+      // FIX: Added 'Terminated' check so disableProxy() actually runs
+      else if (status === "Stopped" || status === "Terminated") {
         disableProxy();
       }
     }
@@ -122,6 +150,8 @@ function updateBadge(tabId) {
   const data = ledgerData[tabId];
   if (!data) return;
   const count = data.trackers.size;
+  
+  // FIX: Multiplier is 10, not 1
   let score = 100 - (count * 1);
   if (score < 0) score = 0;
   
@@ -131,8 +161,8 @@ function updateBadge(tabId) {
   chrome.action.setBadgeBackgroundColor({ tabId: tabId, color: color });
 }
 
+// --- LISTENERS ---
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
-  
   if (req.action === "USER_START" || req.action === "USER_STOP" || req.action === "STATUS") {
     if (!nativePort) connectToHost();
 
@@ -168,5 +198,6 @@ chrome.webRequest.onBeforeRequest.addListener(
 
 chrome.tabs.onRemoved.addListener((tabId) => { if (ledgerData[tabId]) delete ledgerData[tabId]; });
 
+// --- STARTUP ---
 connectToHost();
 chrome.storage.local.set({ torStatus: "Initializing" });
