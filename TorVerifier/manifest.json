@@ -2,6 +2,7 @@
   "manifest_version": 3,
   "name": "Privacy Ledger",
   "version": "1.0",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxzGlIC6zNxiKxiAShz7HB7BjVmL+NlfSdmwjYBw+Z8P8xdcFndm4KxuR+Rn9iSHMUBsVViL5NIoHpyHLqDU1YN2Tw79lUOGZo48SvHiwea8XKdeQ5DXBtvYTXrUwq0DV8xGWI1oUWEvuri/WeJ1NwSg/wMilKcjXeVaQuHn3K2tKLGmE9XAYXWv8x8GUSTQ3aAQb0uHQ3NTYvRwHxu+QC9So2sjXXmIjk7mHULxX9fGPrsF7SoAySHNwDip7FVkwO3SpVrDqhYYHFgDF4ufq7+5++pwGSSPl428h6gfTf/wt4nNsAfdCctoh2yDDwB2y3Ko3Ch3yuX33A3QdxKASVwIDAQAB",
   "description": "An app that utilizes a Tor proxy wrapper to anonymize traffic and display all active webpage trackers to the user.",
   "permissions": [
     "nativeMessaging",

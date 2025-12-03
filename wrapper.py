@@ -8,7 +8,7 @@ import struct
 # --- CONFIGURATION ---
 HOST_NAME = "com.privacyscanner.torproxy" 
 
-EXTENSION_ID = "micdbclffdldmflilegifffnbkknpibi" 
+EXTENSION_ID = "ahffcmbngoblnlkjceeinoejdamlgmlm" 
 
 def install_manifest():
     # MODE 1: Installer Logic
