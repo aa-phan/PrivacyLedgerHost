@@ -29,6 +29,9 @@ This project consists of two distinct components that communicate via Chrome's *
 ## 📥 Installation Guide
 
 Because this project involves a Native Host (executable), installation is a two-step process.
+**Note:** Because of the way extensions are created, if you download this project as-is, you will not be able to set it up. This is because the extension ID is different for every user when loading an unpacked extension. This can be addressed by creating your own one-time key with OpenSSL, extracting the public key, and placing it inside the manifest.json. Now, when you load the extension into Chrome, it will have a custom extension ID that is consistent across other devices that you send your project to. This extension ID should be placed in the wrapper.py, upon which you should repackage the wrapper.py file and the Tor executable with this command: `pyinstaller --onedir --add-binary "tor:." --name "PrivacyLedgerHost" wrapper.py`. 
+
+Admittedly you could also just add the extension ID that's unique to your computer into wrapper.py and repackage it so I'll leave that choice to you lol
 
 ### Phase 1: Install the Privacy Ledger Extension
 1.  Download the TorVerifier folder from this Github repository, or clone the entire repository. If downloading just the TorVerifier folder, make sure it is unzipped and structured as `'/TorVerifier/[various js, json, html files]'`, not `'/TorVerifier/TorVerifier/[various js, json, html files]'`.
